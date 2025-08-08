@@ -1,0 +1,32 @@
+# STM32CubeIDE specific
+.metadata/
+[Dd]ebug/
+[Rr]elease/
+Drivers/
+Middlewares/
+Startup/
+.launch
+
+# Build files
+*.o
+*.d
+*.ld
+*.axf
+*.bin
+*.hex
+*.map
+*.lst
+*.elf
+
+# IDE specific
+*.launch
+*.pydevproject
+*.swp
+.idea/
+*.ioc.md5
+*.ioc.csv
+
+# Other
+*.log
+.DS_Store
+.vscode/
