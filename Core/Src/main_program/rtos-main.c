@@ -5,6 +5,7 @@
 // #include "motor_ctrl.hpp"
 #include "timers.h"
 #include "motor_monitor.hpp"
+#include "trace.hpp"
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;

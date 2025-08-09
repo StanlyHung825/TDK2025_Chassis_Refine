@@ -31,9 +31,6 @@ extern "C" {
 extern ADC_HandleTypeDef hadc1;
 extern uint16_t adcRead[7];
 
-double weight_err = 0, weight_change = 0, weight_lastTime = 0;
-double cmd_Vx = 0, cmd_Vy = 0, cmd_W = 0;
-
 
 void   trace_init();            // Initialize infrared sensor
 double trace_straight_line();   // Output: the rotation speed. Compute the offset from straight line
