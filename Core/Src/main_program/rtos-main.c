@@ -9,6 +9,9 @@
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 
+uint16_t adcRead[7] = {0};
+
+
 uint16_t CNT = 0;
 
 TimerHandle_t xTimer;
@@ -19,6 +22,8 @@ void StartDefaultTask(void *argument)
     xTimer = xTimerCreate("MotorTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0, motorTimerCallback);
     xTimerStart(xTimer, 0);
     HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
+
+    trace_init();
 
     for(;;)
     {

@@ -10,11 +10,11 @@ void Chassis::setSpeed(double Vx_goal, double Vy_goal, double W_goal){
 }
 
 void Chassis::getLocation(){
-    _theta += _W_now * DT;                                             // rad
-    double Vx_global = _Vx_now * cos(_theta) - _Vy_now * sin(_theta);   // cm/s
-    double Vy_global = _Vx_now * sin(_theta) + _Vy_now * cos(_theta);   // cm/s
-    _x += Vx_global * (DT/1000);                                              // cm
-    _y += Vy_global * (DT/1000);                                              // cm
+    theta += _W_now * DT;                                              // rad
+    double Vx_global = _Vx_now * cos(theta) - _Vy_now * sin(theta);   // cm/s
+    double Vy_global = _Vx_now * sin(theta) + _Vy_now * cos(theta);   // cm/s
+    x += Vx_global * (DT/1000);                                        // cm
+    y += Vy_global * (DT/1000);                                        // cm
 }
 
 void Chassis::Mecan_ForwardKinematics(){

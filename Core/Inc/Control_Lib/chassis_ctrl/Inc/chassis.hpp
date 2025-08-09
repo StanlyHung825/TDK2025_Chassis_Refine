@@ -23,7 +23,7 @@ class Chassis {
         void getLocation();                                                 // Get the location of the chassis
         void Mecan_ForwardKinematics();                                     // Compute the forward kinematics of mecanum chassis
         void Mecan_InverseKinematics();                                     // Compute the inverse kinematics of mecanum chassis
-        double _x = INIT_X, _y = INIT_Y, _theta = INIT_THETA;
+        double x = INIT_X, y = INIT_Y, theta = INIT_THETA;
         
     private:
         MotorController _motorFR, _motorFL, _motorBR, _motorBL;
