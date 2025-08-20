@@ -6,6 +6,7 @@
 #include "timers.h"
 #include "motor_monitor.hpp"
 #include "trace.hpp"
+#include "uros_init.h"
 
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
@@ -24,12 +25,13 @@ void StartDefaultTask(void *argument)
     xTimerStart(xTimer, 0);
     HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
 
+    uros_init();
     trace_init();
 
     for(;;)
     {
-        
-        osDelay(100);
+        uros_agent_status_check();
+        osDelay(1000/FREQUENCY);
     }
 }
 
