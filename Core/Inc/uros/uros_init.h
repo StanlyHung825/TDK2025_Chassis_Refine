@@ -22,6 +22,7 @@
 #include <std_msgs/msg/int32.h>
 #include <std_msgs/msg/bool.h>
 #include <geometry_msgs/msg/twist.h>
+#include <nav_msgs/msg/odometry.h>
 
 #include "config.h"
 #include "timers.h"
@@ -63,6 +64,7 @@ void uros_create_entities(void);
 void uros_destroy_entities(void);
 
 void cmd_vel_sub_cb(const void* msgin);
+void pose_pub_timer_cb(rcl_timer_t * timer, int64_t last_call_time);
 
 #ifdef __cplusplus
 }

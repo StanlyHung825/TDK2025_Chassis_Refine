@@ -9,9 +9,10 @@
 #include "uros_init.h"
 
 rcl_publisher_t           pose_pub;
-geometry_msgs__msg__Twist pose_msg;
+nav_msgs__msg__Odometry   pose_msg;
 rcl_subscription_t        cmd_vel_sub;
 geometry_msgs__msg__Twist cmd_vel_msg;
+rcl_timer_t pose_pub_timer;
 
 
 rclc_support_t support;
@@ -125,14 +126,16 @@ void uros_create_entities(void) {
   rclc_publisher_init_default(                                                  // Initialize publisher for pose
     &pose_pub,
     &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, Twist),
+    ROSIDL_GET_MSG_TYPE_SUPPORT(nav_msgs, msg, Odometry),
     "robot/pose");
-  pose_msg.linear.x = 0.0;
-  pose_msg.linear.y = 0.0;
-  pose_msg.linear.z = 0.0;
-  pose_msg.angular.x = 0.0;
-  pose_msg.angular.y = 0.0;
-  pose_msg.angular.z = 0.0;
+  pose_msg.pose.pose.position.x = 0.0;
+  pose_msg.pose.pose.position.y = 0.0;
+  pose_msg.pose.pose.position.z = 0.0;
+  pose_msg.pose.pose.orientation.x = 0.0;
+  pose_msg.pose.pose.orientation.y = 0.0;
+  pose_msg.pose.pose.orientation.z = 0.0;
+  pose_msg.pose.pose.orientation.w = 1.0;
+
   rmw_uros_set_publisher_session_timeout(                                       // Set session timeout for publisher
     rcl_publisher_get_rmw_handle(&pose_pub),
     10);
@@ -149,10 +152,13 @@ void uros_create_entities(void) {
   cmd_vel_msg.angular.y = 0.0;
   cmd_vel_msg.angular.z = 0.0;
 
+  rclc_timer_init_default(&pose_pub_timer, &support, RCL_MS_TO_NS(100), pose_pub_timer_cb);
+
   
-  rclc_executor_init(&executor, &support.context, 1, &allocator); // Create executor
+  rclc_executor_init(&executor, &support.context, 2, &allocator); // Create executor
 
   rclc_executor_add_subscription(&executor, &cmd_vel_sub, &cmd_vel_msg, &cmd_vel_sub_cb, ON_NEW_DATA); // Add subscriber to executor
+  rclc_executor_add_timer(&executor, &pose_pub_timer); // Add timer to executor
 }
 void uros_destroy_entities(void) {
   rmw_context_t* rmw_context = rcl_context_get_rmw_context(&support.context);
@@ -163,6 +169,8 @@ void uros_destroy_entities(void) {
 
   // Destroy subscriber
   rcl_subscription_fini(&cmd_vel_sub, &node);
+
+  rcl_timer_fini(&pose_pub_timer);
 
   // Destroy executor
   rclc_executor_fini(&executor);
@@ -175,11 +183,12 @@ void uros_destroy_entities(void) {
 void cmd_vel_sub_cb(const void* msgin) {
   const geometry_msgs__msg__Twist * msg = (const geometry_msgs__msg__Twist *)msgin;
   cmd_vel_msg = *msg;
-  pose_msg.linear.x = cmd_vel_msg.linear.x*0.02;
-  pose_msg.linear.y = cmd_vel_msg.linear.y*0.02;
-  pose_msg.linear.z = cmd_vel_msg.linear.z*0.02;
-  pose_msg.angular.x = cmd_vel_msg.angular.x*0.02;
-  pose_msg.angular.y = cmd_vel_msg.angular.y*0.02;
-  pose_msg.angular.z = cmd_vel_msg.angular.z*0.02;
+  pose_msg.pose.pose.position.x = cmd_vel_msg.linear.x*0.02;
+  pose_msg.pose.pose.position.y = cmd_vel_msg.linear.y*0.02;
+  pose_msg.pose.pose.position.z = cmd_vel_msg.linear.z*0.02;
+  pose_msg.pose.pose.orientation.z = cmd_vel_msg.angular.z*0.02;
+}
+
+void pose_pub_timer_cb(rcl_timer_t * timer, int64_t last_call_time) {
   rcl_publish(&pose_pub, &pose_msg, NULL);
 }
